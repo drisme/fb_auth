@@ -65,3 +65,24 @@ class EditInfo extends AuthEvent {
   final String displayName, photoUrl;
   final AuthUser user;
 }
+
+class PhoneVerificationRequest extends AuthEvent {
+  PhoneVerificationRequest(this.phoneNumber);
+
+  final String phoneNumber;
+}
+
+class PhoneVerificationReceipt extends AuthEvent {
+  PhoneVerificationReceipt(this.phoneNumber, this.verificationId);
+
+  final String phoneNumber;
+  final String verificationId;
+}
+
+class PhoneConfirmation extends AuthEvent {
+  PhoneConfirmation(this.verificationId, this.smsCode);
+
+  final String verificationId;
+  final String smsCode;
+}
+

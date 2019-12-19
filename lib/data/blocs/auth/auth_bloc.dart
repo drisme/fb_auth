@@ -59,6 +59,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (event is ChangeUser) {
       yield LoggedInState(event.user);
     }
+    if (event is PhoneVerificationRequest) {
+      yield* _mapVerifyPhoneRequestToState(event);
+    }
+    if (event is PhoneVerificationReceipt) {
+      yield* _mapVerificationReceiptToPendingState(event);
+    }
+    if (event is PhoneConfirmation) {
+      yield* _mapPhoneConfirmationToState(event);
+    }
   }
 
   /// Called every time the user info changes. You can use this method for updating a database.
@@ -137,6 +146,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Stream<AuthState> _mapVerifyToState(SendEmailVerification event) async* {
     await _auth.sendEmailVerification();
+  }
+
+  Stream<AuthState> _mapVerifyPhoneRequestToState(event) async* {
+
+    final pendingVerificationId = (String verificationId) async {
+      this.add(PhoneVerificationReceipt(event?.phoneNumber, verificationId));
+    };
+
+    final auth_creds = await _auth.phoneVerificationRequest(event?.phoneNumber, pendingVerificationId);
+    // depending on returned values switch to different states:
+    // if verificationId only:
+    // if verificationId && authCredentials
+    //
+    // yield PhoneVerificationPendingState(event?.verificationId);
+  }
+
+  Stream<AuthState> _mapVerificationReceiptToPendingState(event) async* {
+    yield PhoneVerificationPendingState(event?.phoneNumber, event?.verificationId);
+  }
+
+  Stream<AuthState> _mapPhoneConfirmationToState(event) async* {
+    await _auth.loginPhone(event?.verificationId, event?.smsCode);
+    final _user = await _auth.currentUser();
+    yield LoggedInState(_user);
   }
 
   Stream<AuthState> _mapEditInfoToState(EditInfo event) async* {

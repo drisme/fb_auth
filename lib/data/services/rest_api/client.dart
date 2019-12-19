@@ -201,4 +201,14 @@ class FbClient implements FBAuthImpl {
   Future loginGoogle({String idToken, String accessToken}) {
     throw 'Platform Not Supported';
   }
+
+  @override
+  Future phoneVerificationRequest(String phoneNumber, Function verificationCallback) {
+    throw 'Platform Not Supported';
+  }
+
+  @override
+  Future<AuthUser> loginPhone(String verificationId, String smsCode) {
+    throw 'Platform Not Supported';
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../classes/index.dart';
 
@@ -21,4 +22,11 @@ class AuthErrorState extends AuthState {
   AuthErrorState(this.message);
 
   final String message;
+}
+
+class PhoneVerificationPendingState extends AuthState {
+  PhoneVerificationPendingState(this.phoneNumber, this.verificationId);
+
+  final String phoneNumber;
+  final String verificationId;
 }

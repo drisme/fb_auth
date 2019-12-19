@@ -53,6 +53,16 @@ class FBAuth implements FBAuthImpl {
   }
 
   @override
+  Future phoneVerificationRequest(String phoneNumber, Function verificationCallback) async {
+    throw 'Platform Not Supported';
+  }
+
+  @override
+  Future loginPhone(String verificationId, String smsCode) async {
+    throw 'Platform Not Supported';
+  }
+
+  @override
   Future loginCustomToken(String token) async {
     throw 'Platform Not Supported';
   }
@@ -61,4 +71,6 @@ class FBAuth implements FBAuthImpl {
   Future loginGoogle({String idToken, String accessToken}) async {
     throw 'Platform Not Supported';
   }
+
+
 }

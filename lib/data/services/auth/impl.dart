@@ -49,4 +49,12 @@ abstract class FBAuthImpl {
   Future loginGoogle({String idToken, String accessToken}) async {
     throw 'Platform Not Supported';
   }
+
+  Future phoneVerificationRequest(String phoneNumber, Function verificationCallback) async {
+    throw 'Platform Not Supported';
+  }
+
+  Future loginPhone(String verificationId, String smsCode) async {
+    throw 'Platform Not Supported';
+  }
 }

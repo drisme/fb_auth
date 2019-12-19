@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/phone_auth_provider.dart';
 
 import '../../classes/index.dart';
 import '../auth/impl.dart';
@@ -121,6 +122,86 @@ class FbSdk implements FBAuthImpl {
       throw 'Error sendEmailVerification -> $e';
     }
   }
+
+  @override
+  Future phoneVerificationRequest(String phoneNumber, Function verificationCallback) async {
+    AuthUser _user;
+    try {
+      final PhoneVerificationCompleted verificationCompleted = (AuthCredential cred) async {
+          print('Inside _sendCodeToPhoneNumber: signInWithPhoneNumber auto succeeded: $cred');
+          _auth.signInWithCredential(cred)
+          .then((AuthResult _result) {
+            if (_result != null && _result?.user != null) {
+              _user = AuthUser(
+                uid: _result.user.uid,
+                displayName: _result.user.displayName,
+                email: _result.user?.email,
+                isAnonymous: _result.user.isAnonymous,
+                isEmailVerified: _result.user.isEmailVerified,
+                photoUrl: _result.user.photoUrl,
+              );
+
+            }
+            else {
+              throw 'Error with autoverification';
+            };
+          });
+
+
+
+      };
+
+      final PhoneVerificationFailed verificationFailed = (AuthException authException) {
+
+          print('Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
+
+      };
+
+      final PhoneCodeSent codeSent =
+          (String verificationId, [int forceResendingToken]) async {
+        await verificationCallback(verificationId);
+      };
+
+      final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
+          (String verificationId) {
+        print("time out: $verificationId");
+      };
+
+      await _auth.verifyPhoneNumber(
+          phoneNumber: phoneNumber,
+          timeout: const Duration(seconds: 5),
+          verificationCompleted: verificationCompleted,
+          verificationFailed: verificationFailed,
+          codeSent: codeSent,
+          codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
+
+    } catch (e) {
+      throw 'Error sendEmailVerification -> $e';
+    }
+    return _user;
+  }
+
+  @override
+  Future loginPhone(String verificationId, String smsCode) async {
+
+    var _cred = await PhoneAuthProvider.getCredential(verificationId: verificationId, smsCode: smsCode);
+    final _result = await _auth.signInWithCredential(_cred);
+    if (_result != null && _result?.user != null) {
+      final _user = AuthUser(
+        uid: _result.user.uid,
+        displayName: _result.user.displayName,
+        email: _result.user?.email,
+        isAnonymous: _result.user.isAnonymous,
+        isEmailVerified: _result.user.isEmailVerified,
+        photoUrl: _result.user.photoUrl,
+      );
+      return _user;
+    }
+    // await phoneVerificationRequest(phoneNumber);
+    // return await currentUser();
+  }
+
+
 
   @override
   Future<AuthUser> createAccount(String username, String password,

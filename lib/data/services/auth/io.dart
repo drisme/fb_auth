@@ -155,6 +155,24 @@ class FBAuth implements FBAuthImpl {
   }
 
   @override
+  Future<AuthUser> loginPhone(String verificationId, String smsCode) async {
+    if (useClient) {
+      return _client.loginPhone(verificationId, smsCode);
+    } else {
+      return _sdk.loginPhone(verificationId, smsCode);
+    }
+  }
+
+  @override
+  Future<AuthUser> phoneVerificationRequest(String phoneNumber, Function verificationCallback) async {
+    if (useClient) {
+      return _client.phoneVerificationRequest(phoneNumber, verificationCallback);
+    } else {
+      return _sdk.phoneVerificationRequest(phoneNumber, verificationCallback);
+    }
+  }
+
+  @override
   Future<AuthUser> createAccount(String username, String password,
       {String displayName, String photoUrl}) async {
     if (useClient) {
