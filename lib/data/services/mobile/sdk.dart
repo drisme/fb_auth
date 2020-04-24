@@ -146,15 +146,10 @@ class FbSdk implements FBAuthImpl {
               throw 'Error with autoverification';
             };
           });
-
-
-
       };
 
       final PhoneVerificationFailed verificationFailed = (AuthException authException) {
-
           print('Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
-
       };
 
       final PhoneCodeSent codeSent =
